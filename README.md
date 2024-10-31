@@ -63,6 +63,28 @@ Bem-vindo ao nosso projeto de FDS (Fundamentos de Desenvolvimento de Software). 
     >
 </details>
 
+<details>
+  <summary>Entrega 4</summary>
+
+  ### Sprint do Jira:
+  
+  ### Backlog:
+
+<li>
+    <a   
+      >Link do Screencast do Figma</a
+    >
+<li>
+    <a  
+      >Link dos testes avançados</a
+    >
+
+<li>
+    <a 
+      >Link do Screencast do site</a
+    >
+</details>
+
 ## Membros do grupo:
 
   - **Arthur Assis** - [aab4@cesar.school](mailto:aab4@cesar.school)
