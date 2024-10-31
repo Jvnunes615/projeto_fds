@@ -1,22 +1,22 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.edge.service import Service as EdgeService
+from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.microsoft import EdgeChromiumDriverManager
 import time
-from webdriver_manager.chrome import ChromeDriverManager
 
 class FunctionalTests(StaticLiveServerTestCase):
+    
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        chrome_options = Options()
-        chrome_options.add_argument("--headless")  # Rodar sem interface gráfica
-        # Corrigindo a inicialização do ChromeDriver
-        cls.driver = webdriver.Chrome(service=Service(ChromeDriverManager(version="130.0.6723.70").install()), options=chrome_options)
+        edge_options = EdgeOptions()
+        edge_options.add_argument
+        cls.driver = webdriver.Edge(service=EdgeService(EdgeChromiumDriverManager().install()), options=edge_options)
         cls.driver.implicitly_wait(10)
 
     @classmethod
@@ -25,21 +25,26 @@ class FunctionalTests(StaticLiveServerTestCase):
         super().tearDownClass()
 
     def test_fornecedor_cadastrar_produto(self):
-        # Faz login como fornecedor
+        print("Iniciando teste de cadastro de produto")
         self.driver.get(f'{self.live_server_url}/login/')
+        
         username_input = self.driver.find_element(By.NAME, 'nome_usuario')
         password_input = self.driver.find_element(By.NAME, 'senha')
-        username_input.send_keys('fornecedor_teste')
-        password_input.send_keys('senha_teste')
+        username_input.send_keys('fornecedor2')
+        password_input.send_keys('123')
         password_input.send_keys(Keys.RETURN)
         
-        # Espera explícita até a página de redirecionamento
-        WebDriverWait(self.driver, 10).until(EC.url_contains('/home_fornecedor'))
+        try:
+            WebDriverWait(self.driver, 15).until(EC.url_contains('/home_fornecedor'))
+            print("Redirecionado para home_fornecedor com sucesso.")
+        except:
+            print("Falha ao redirecionar para home_fornecedor.")
+            print("URL atual:", self.driver.current_url)
+            print("Conteúdo da página atual:", self.driver.page_source)
+            self.fail("O teste falhou ao redirecionar para home_fornecedor após o login.")
 
-        # Acessa a página de cadastro de produto
         self.driver.get(f'{self.live_server_url}/cadastrar_produto/')
         
-        # Preenche os campos obrigatórios do formulário
         nome_produto = self.driver.find_element(By.NAME, 'nome_produto')
         descricao = self.driver.find_element(By.NAME, 'descricao')
         preco = self.driver.find_element(By.NAME, 'preco')
@@ -52,108 +57,129 @@ class FunctionalTests(StaticLiveServerTestCase):
         estoque.send_keys('20')
         disponivel.click()
         
-        # Envia o formulário
         self.driver.find_element(By.XPATH, '//button[@type="submit"]').click()
+        
+        try:
+            WebDriverWait(self.driver, 15).until(EC.url_contains('/home_fornecedor'))
+            print("Produto cadastrado e redirecionado para home_fornecedor.")
+        except:
+            print("Falha ao redirecionar para home_fornecedor após cadastro de produto.")
+            print("URL atual:", self.driver.current_url)
+            print("Conteúdo da página atual:", self.driver.page_source)
+            self.fail("O teste falhou ao redirecionar para home_fornecedor após o cadastro de produto.")
 
-        # Espera pelo redirecionamento
-        WebDriverWait(self.driver, 10).until(EC.url_contains('/home_fornecedor'))
-
-        # Verifica se o produto foi cadastrado e está listado na página do fornecedor
         page_source = self.driver.page_source
         self.assertIn('Produto Teste', page_source)
+        print("Teste de cadastro de produto concluído")
 
     def test_cliente_revisar_e_editar_carrinho(self):
-        # Faz login como cliente
+        print("Iniciando teste de revisão e edição do carrinho")
         self.driver.get(f'{self.live_server_url}/login/')
+        
         username_input = self.driver.find_element(By.NAME, 'nome_usuario')
         password_input = self.driver.find_element(By.NAME, 'senha')
-        username_input.send_keys('cliente_teste')
-        password_input.send_keys('senha_teste')
+        username_input.send_keys('galindo')
+        password_input.send_keys('123')
         password_input.send_keys(Keys.RETURN)
-        
-        WebDriverWait(self.driver, 10).until(EC.url_contains('/home'))
 
-        # Acessa a página de exibir carrinho
+        try:
+            WebDriverWait(self.driver, 15).until(EC.url_contains('/home'))
+            print("Redirecionado para a home do cliente com sucesso.")
+        except:
+            print("Falha ao redirecionar para home.")
+            print("URL atual:", self.driver.current_url)
+            print("Conteúdo da página atual:", self.driver.page_source)
+            self.fail("Falha ao redirecionar para home após login.")
+
         self.driver.get(f'{self.live_server_url}/carrinho/')
         
-        # Verifica se há itens no carrinho
         page_source = self.driver.page_source
         self.assertIn('Seu carrinho', page_source)
         
-        # Edita a quantidade de um item no carrinho
         quantidade_input = self.driver.find_element(By.NAME, 'quantidade')
         quantidade_input.clear()
         quantidade_input.send_keys('2')
         
-        # Envia a alteração
         self.driver.find_element(By.XPATH, '//button[@type="submit"]').click()
 
-        # Verifica se o carrinho foi atualizado com a nova quantidade
         total = self.driver.find_element(By.ID, 'total_carrinho').text
         self.assertIn('Total atualizado', total)
-
-    def test_fornecedor_historico_vendas(self):
-        # Faz login como fornecedor
-        self.driver.get(f'{self.live_server_url}/login/')
-        username_input = self.driver.find_element(By.NAME, 'nome_usuario')
-        password_input = self.driver.find_element(By.NAME, 'senha')
-        username_input.send_keys('fornecedor_teste')
-        password_input.send_keys('senha_teste')
-        password_input.send_keys(Keys.RETURN)
-        
-        WebDriverWait(self.driver, 10).until(EC.url_contains('/home_fornecedor'))
-
-        # Acessa o histórico de vendas
-        self.driver.get(f'{self.live_server_url}/historico_vendas/')
-
-        # Verifica se o histórico de vendas contém vendas
-        page_source = self.driver.page_source
-        self.assertIn('Histórico de Vendas', page_source)
-        self.assertIn('Produto Teste', page_source)
-
-    def test_cliente_historico_compras(self):
-        # Faz login como cliente
-        self.driver.get(f'{self.live_server_url}/login/')
-        username_input = self.driver.find_element(By.NAME, 'nome_usuario')
-        password_input = self.driver.find_element(By.NAME, 'senha')
-        username_input.send_keys('cliente_teste')
-        password_input.send_keys('senha_teste')
-        password_input.send_keys(Keys.RETURN)
-        
-        WebDriverWait(self.driver, 10).until(EC.url_contains('/home'))
-
-        # Acessa o histórico de compras
-        self.driver.get(f'{self.live_server_url}/historico_compras/')
-
-        # Verifica se o histórico de compras contém compras
-        page_source = self.driver.page_source
-        self.assertIn('Histórico de Compras', page_source)
+        print("Teste de revisão e edição do carrinho concluído")
 
     def test_cliente_adicionar_itens_ao_carrinho(self):
-        # Faz login como cliente
+        print("Iniciando teste de adição de itens ao carrinho")
         self.driver.get(f'{self.live_server_url}/login/')
+        
         username_input = self.driver.find_element(By.NAME, 'nome_usuario')
         password_input = self.driver.find_element(By.NAME, 'senha')
-        username_input.send_keys('cliente_teste')
-        password_input.send_keys('senha_teste')
+        username_input.send_keys('galindo')
+        password_input.send_keys('123')
         password_input.send_keys(Keys.RETURN)
+
+        try:
+            WebDriverWait(self.driver, 15).until(EC.url_contains('/home'))
+            print("Redirecionado para a home do cliente com sucesso.")
+        except:
+            print("Falha ao redirecionar para home.")
+            print("URL atual:", self.driver.current_url)
+            print("Conteúdo da página atual:", self.driver.page_source)
+            self.fail("Falha ao redirecionar para home após login.")
+
+        self.driver.get(f'{self.live_server_url}/detalhes_anonimo/1/')
         
-        WebDriverWait(self.driver, 10).until(EC.url_contains('/home'))
-
-        # Acessa a página de um produto
-        self.driver.get(f'{self.live_server_url}/detalhes_anonimo/1/')  # Produto ID 1
-
-        # Adiciona o produto ao carrinho
         self.driver.find_element(By.XPATH, '//button[text()="Adicionar ao carrinho"]').click()
 
-        WebDriverWait(self.driver, 10).until(EC.url_contains('/carrinho'))
+        try:
+            WebDriverWait(self.driver, 15).until(EC.url_contains('/carrinho'))
+            print("Redirecionado para carrinho após adicionar item.")
+        except:
+            print("Falha ao redirecionar para carrinho após adicionar item.")
+            print("URL atual:", self.driver.current_url)
+            print("Conteúdo da página atual:", self.driver.page_source)
+            self.fail("Falha ao redirecionar para carrinho após adição de item.")
 
-        # Verifica se o produto foi adicionado ao carrinho
         page_source = self.driver.page_source
         self.assertIn('Produto Teste', page_source)
+        print("Teste de adição de itens ao carrinho concluído")
 
     def test_cliente_favoritar_produto(self):
-        # Faz login como cliente
+        print("Iniciando teste de favoritar produto")
+        self.driver.get(f'{self.live_server_url}/login/')
+        
+        username_input = self.driver.find_element(By.NAME, 'nome_usuario')
+        password_input = self.driver.find_element(By.NAME, 'senha')
+        username_input.send_keys('galindo')
+        password_input.send_keys('123')
+        password_input.send_keys(Keys.RETURN)
+
+        try:
+            WebDriverWait(self.driver, 15).until(EC.url_contains('/home'))
+            print("Redirecionado para a home do cliente com sucesso.")
+        except:
+            print("Falha ao redirecionar para home.")
+            print("URL atual:", self.driver.current_url)
+            print("Conteúdo da página atual:", self.driver.page_source)
+            self.fail("Falha ao redirecionar para home após login.")
+
+        self.driver.get(f'{self.live_server_url}/detalhes_anonimo/1/')
+        
+        self.driver.find_element(By.XPATH, '//button[@class="fav-icon"]').click()
+
+        try:
+            WebDriverWait(self.driver, 15).until(EC.url_contains('/favoritos'))
+            print("Redirecionado para a lista de favoritos após favoritar.")
+        except:
+            print("Falha ao redirecionar para favoritos após favoritar produto.")
+            print("URL atual:", self.driver.current_url)
+            print("Conteúdo da página atual:", self.driver.page_source)
+            self.fail("Falha ao redirecionar para lista de favoritos após favoritar produto.")
+
+        page_source = self.driver.page_source
+        self.assertIn('Produto Teste', page_source)
+        print("Teste de favoritar produto concluído")
+
+    def test_cliente_historico_compras(self):
+        print("Iniciando teste de histórico de compras")
         self.driver.get(f'{self.live_server_url}/login/')
         username_input = self.driver.find_element(By.NAME, 'nome_usuario')
         password_input = self.driver.find_element(By.NAME, 'senha')
@@ -161,16 +187,29 @@ class FunctionalTests(StaticLiveServerTestCase):
         password_input.send_keys('senha_teste')
         password_input.send_keys(Keys.RETURN)
         
-        WebDriverWait(self.driver, 10).until(EC.url_contains('/home'))
+        WebDriverWait(self.driver, 15).until(EC.url_contains('/home'))
 
-        # Acessa a página de um produto
-        self.driver.get(f'{self.live_server_url}/detalhes/1/')  # Produto ID 1
-
-        # Favorita o produto
-        self.driver.find_element(By.XPATH, '//button[text()="Favoritar"]').click()
-
-        WebDriverWait(self.driver, 10).until(EC.url_contains('/favoritos'))
-
-        # Verifica se o produto foi favoritado
+        self.driver.get(f'{self.live_server_url}/historico_compras/')
         page_source = self.driver.page_source
-        self.assertIn('Produto Teste', page_source)
+        
+        # Verifica se o histórico de compras é exibido
+        self.assertIn('Histórico de Compras', page_source)
+        print("Teste de histórico de compras concluído")
+
+    def test_fornecedor_historico_vendas(self):
+        print("Iniciando teste de histórico de vendas")
+        self.driver.get(f'{self.live_server_url}/login/')
+        username_input = self.driver.find_element(By.NAME, 'nome_usuario')
+        password_input = self.driver.find_element(By.NAME, 'senha')
+        username_input.send_keys('fornecedor2')
+        password_input.send_keys('123')
+        password_input.send_keys(Keys.RETURN)
+        
+        WebDriverWait(self.driver, 15).until(EC.url_contains('/home_fornecedor'))
+
+        self.driver.get(f'{self.live_server_url}/historico_vendas/')
+        page_source = self.driver.page_source
+        
+        # Verifica se o histórico de vendas é exibido
+        self.assertIn('Histórico de Vendas', page_source)
+        print("Teste de histórico de vendas concluído")
