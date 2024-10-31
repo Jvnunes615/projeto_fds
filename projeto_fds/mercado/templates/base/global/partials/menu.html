@@ -1,15 +1,14 @@
 {% load static %}
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz@12..96&display=swap');
-
     :root {
         --branco-principal: #F7F7FC;
         --cor-principal: black;
-        --preto-principal:#1D1D1B;
-        --branco-navbar:#FFFFFF;
-        --branco-fundo: #F9F9F9; ;
+        --preto-principal: #1D1D1B;
+        --branco-navbar: #FFFFFF;
+        --branco-fundo: #F9F9F9;
         --cor-glass-login-cadastro: #F9F9F9;
-        --cor-botoes:black;
+        --cor-botoes: black;
         --fonte-principal: 'Bricolage Grotesque';
     }
     * {
@@ -18,7 +17,6 @@
         font-family: 'Bricolage Grotesque', sans-serif;
         font-weight: bold;
     }
-
     header {
         display: flex;
         justify-content: space-between;
@@ -28,17 +26,14 @@
         position: relative;
         box-shadow: rgba(0, 0, 0, 0.2) 0.5px 3px 2.6px;
     }
-
     .div-logo a img {
         height: 50px;
     }
-
     .dropdown {
         position: relative;
         display: inline-block;
         margin-right: 40px;
     }
-
     .dropdown-menu {
         display: none;
         position: absolute;
@@ -49,7 +44,6 @@
         border-radius: 20px;
         padding: 10px;
     }
-
     .dropdown-menu a, button {
         font-weight: lighter;
         color: #FFFFFF;
@@ -58,16 +52,13 @@
         display: block;
         border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     }
-
     .dropdown-menu a:hover {
         background-color: var(--cor-botoes);
         border-radius: 20px;
     }
-
     .dropdown:hover .dropdown-menu {
         display: block;
     }
-
     .dropdown button {
         background-color: var(--cor-principal);
         color: #FFFFFF;
@@ -79,12 +70,10 @@
         display: flex;
         align-items: center;
     }
-
     .dropdown button img {
         margin-left: 10px;
         height: 20px;
     }
-
     .button-sair {
         font-size: 17px;
         padding: 0;
@@ -108,7 +97,7 @@
         </button>
         <div class="dropdown-menu">
             {% if user.is_authenticated %}
-                {% if user.cliente.is_supplier %}
+                {% if user.usercliente.is_supplier %}
                     <!-- Opções para fornecedores autenticados -->
                     <a href="{% url 'mercado:cadastrar_produto' %}">Cadastrar Produto</a>
                     <a href="{% url 'mercado:historico_vendas' %}">Histórico de Vendas</a>
@@ -141,5 +130,6 @@
 {% endif %}
 
 </body>
+
 
 

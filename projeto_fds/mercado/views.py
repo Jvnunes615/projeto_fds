@@ -8,14 +8,14 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import logout as auth_logout
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
 import json
 from django.core.files.storage import FileSystemStorage
 import random
 from django.http import JsonResponse
 from django.contrib import messages
 from .models import UserCliente
-
+from django.views.decorators.csrf import csrf_exempt
 
 
 # Create your views here.
@@ -329,10 +329,13 @@ def home_fornecedor(request):
     # Mensagem de boas-vindas para o fornecedor
     messages.success(request, "Bem-vindo, fornecedor!")
 
-    # Contexto que pode ser passado para o template (pode ser expandido conforme necessário)
-    context = {}
+    # Filtra os produtos onde o fornecedor é o usuário autenticado
+    produtos = Produto.objects.filter(fornecedor=request.user)
 
-    # Renderiza o template da home do fornecedor
+    # Contexto passado para o template, incluindo os produtos do fornecedor
+    context = {'produtos': produtos}
+
+    # Renderiza o template da home do fornecedor com os produtos
     return render(request, 'home_fornecedor.html', context)
 
 @login_required  # Garante que só usuários autenticados possam acessar
@@ -369,4 +372,34 @@ def finalizar_compra(request):
     carrinho.itens.all().delete()
 
     messages.success(request, "Compra finalizada com sucesso!")
-    return redirect('mercado:historico_compras')
+    return redirect('historico_compras')
+@login_required
+@user_passes_test(fornecedor_check)  # Verifica se o usuário é fornecedor
+def editar_produto(request, produto_id):
+    produto = get_object_or_404(Produto, id=produto_id, fornecedor=request.user)
+    return render(request, 'mercado:editar_produto.html', {'produto': produto})
+
+@csrf_exempt
+@login_required
+@user_passes_test(fornecedor_check)
+def atualizar_produto(request, produto_id):
+    if request.method == 'POST':
+        dados = json.loads(request.body)
+        produto = get_object_or_404(Produto, id=produto_id, fornecedor=request.user)
+        produto.nome = dados.get('nome', produto.nome)
+        produto.estoque = dados.get('estoque', produto.estoque)
+        produto.preco = dados.get('preco', produto.preco)
+        produto.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=400)
+from django.shortcuts import redirect
+
+@login_required
+@user_passes_test(fornecedor_check)
+def remover_produto(request, produto_id):
+    if request.method == "POST":
+        produto = get_object_or_404(Produto, id=produto_id, fornecedor=request.user)
+        produto.delete()
+        return JsonResponse({'success': True, 'message': 'Produto removido com sucesso.'})
+    else:
+        return JsonResponse({'success': False, 'message': 'Método não permitido.'}, status=405)
