@@ -345,6 +345,9 @@ def home_fornecedor(request):
 def historico_compras(request):
     compras = Compra.objects.filter(cliente=request.user)  # Obtém as compras do usuário logado
 
+    # Dicionário para armazenar as avaliações do usuário para cada produto
+    avaliacoes_usuario = {avaliacao.produto.id: avaliacao.nota for avaliacao in Avaliacao.objects.filter(cliente=request.user)}
+
     # Tratamento de envio de avaliação
     if request.method == "POST":
         produto_id = request.POST.get('produto_id')
@@ -358,10 +361,15 @@ def historico_compras(request):
             defaults={'nota': nota}
         )
 
-        return redirect('historico_compras')  # Redireciona para evitar reenvio do formulário
+        return redirect('mercado:historico_compras')  # Incluindo o namespace
+
+    # Adiciona as notas de avaliação ao contexto de cada compra/produto
+    for compra in compras:
+        for produto in compra.produtos.all():
+            produto.nota_avaliacao = avaliacoes_usuario.get(produto.id, 0)  # 0 se o produto não tiver avaliação
 
     return render(request, 'historico_compras.html', {'compras': compras})
-@login_required
+ 
 def finalizar_compra(request):
     usuario = request.user
     carrinho = Carrinho.objects.filter(usuario=usuario).first()

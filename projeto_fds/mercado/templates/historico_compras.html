@@ -10,6 +10,7 @@
                 <th>Nome do Produto</th>
                 <th>Quantidade</th>
                 <th>Hora da Compra</th>
+                <th>Avaliação</th>
             </tr>
         </thead>
         <tbody>
@@ -18,6 +19,16 @@
                 <td>{{ produto.nome_produto }}</td>
                 <td>{{ produto.estoque }}</td>
                 <td>{{ compra.data_compra|time:"H:i" }}</td>
+                <td>
+                    <!-- Formulário de Avaliação -->
+                    <form method="POST" action="{% url 'mercado:historico_compras' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="produto_id" value="{{ produto.id }}">
+                        <label for="nota">Nota (0-10):</label>
+                        <input type="number" name="nota" min="0" max="10" value="{{ produto.nota_avaliacao }}">
+                        <button type="submit">Enviar Avaliação</button>
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -29,4 +40,6 @@
 <button onclick="window.location.href='{% url 'mercado:home' %}'" style="margin-top: 20px; padding: 10px; background-color: #000; color: #fff; border: none; cursor: pointer; border-radius: 5px;">
     Voltar para Home
 </button>
+
+
 
