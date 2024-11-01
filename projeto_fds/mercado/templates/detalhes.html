@@ -417,80 +417,96 @@
 
     .sugestao-info a:hover {
         text-decoration: underline;
+
     }
+    #carouselExampleIndicators .carousel-item img { object-fit: cover; height: 100%; width: 100%; }
+    body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
+    .flex-container { display: flex; justify-content: space-between; align-items: center; }
+    .left-content, .left-content2, .right-content, .right-content2 { display: flex; gap: 10px; }
+    h1 { font-size: 40px; padding-left: 60px; padding-top: 40px; }
+    h2 { font-size: 30px; padding-left: 25px; padding-top: 5px; color: #999999; }
+    .text_descricao, .text_avaliacao { font-size: 28px; padding: 30px; }
+    .img-bordered { border-radius: 40px; width: 600px; height: 400px; object-fit: cover; }
+    .detalhes_descricao { color: #999999; padding-left: 40px; font-size: 15px; max-width: 500px; }
+    .rounded-button { background-color: #A75938; border: none; color: white; padding: 15px 32px; cursor: pointer; border-radius: 25px; transition: background-color 0.3s; }
+    .rounded-button:hover { background-color: #B27054; }
+    /* Estilos de Avaliação */
+    .media-avaliacao { font-size: 24px; color: #f5b301; }
+    .review-card { border: 1px solid #ddd; padding: 15px; border-radius: 10px; margin-bottom: 10px; background-color: #fff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
 </style>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 <h1 style="display: flex; align-items: center;">
-    {{ detalhes_produto.nome_produto }}
+    {{ produto.nome_produto }}
 </h1>
 
 <div class="flex-container2">
     <div class="left-content2">
-        <h2>{{detalhes_produto.endereco}}</h2>
+        <h2>{{ produto.endereco }}</h2>
     </div>
     <div class="right-content2">
         <div class="btn-group">
             {% if user.is_authenticated %}
-            {% if produto %}
-            {% if favorito %}
-            <button class="btn">
-
-                <a href="{% url 'mercado:favoritar' produto.id %}"
-                    style="display: flex; align-items: center; text-decoration: none; color: darkred;">
-                    <i class="fa fa-heart fav-icon {% if produto.id in favoritos %}favorited{% endif %}"
-                    data-url="{% url 'mercado:favoritar' produto.id %}"></i>
+                <a href="{% url 'mercado:favoritar' produto.id %}" class="btn" style="color: {% if favorito %}darkred{% else %}black{% endif %};">
+                    <i class="fa fa-heart fav-icon {% if favorito %}favorited{% endif %}" data-url="{% url 'mercado:favoritar' produto.id %}"></i>
                 </a>
-            </button>
             {% else %}
-            <button class="btn">
-                <a href="{% url 'mercado:favoritar' produto.id %}"
-                    style="display: flex; align-items: center; text-decoration: none; color: black;">
-                    <i class="fa fa-heart fav-icon {% if produto.id in favoritos %}favorited{% endif %}"
-                    data-url="{% url 'mercado:favoritar' produto.id %}"></i>
+                <a href="{% url 'mercado:login' %}" class="btn" style="color: black;">
+                    <i class="fa fa-heart fav-icon" data-url="{% url 'mercado:favoritar' produto.id %}"></i>
                 </a>
-            </button>
-            {% endif %}
-            {% endif %}
-            {% else %}
-            <button class="btn">
-                <a href="{% url 'mercado:login' %}"
-                    style="display: flex; align-items: center; text-decoration: none; color: black;">
-                    <i class="fa fa-heart fav-icon {% if produto.id in favoritos %}favorited{% endif %}"
-                    data-url="{% url 'mercado:favoritar' produto.id %}"></i>
-                </a>
-            </button>
             {% endif %}
         </div>
     </div>
-</div>
-
 </div>
 
 <div class="cards">
     <div class="card">
         <div class="carousel-inner">
             {% if produto.foto_ambiente %}
-            <div class="carousel-item active">
-                <img src="{{ produto.foto_ambiente.url }}" class="d-block w-100 img-bordered" alt="{{ produto.nome_produto }}">
-            </div>
+                <div class="carousel-item active">
+                    <img src="{{ produto.foto_ambiente.url }}" class="d-block w-100 img-bordered" alt="{{ produto.nome_produto }}">
+                </div>
             {% else %}
-            <div class="carousel-item active">
-                <svg class="bd-placeholder-img d-block w-100 img-bordered" width="500" height="400"
-                    xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
-                    preserveAspectRatio="xMidYMid slice" focusable="false">
-                    <title>Placeholder</title>
-                    <rect width="500" height="400" fill="#55595c" rx="40" ry="40"></rect>
-                    <text x="35%" y="50%" fill="#eceeef" dy=".3em">{{ produto.nome_produto }}</text>
-                </svg>
-            </div>
+                <div class="carousel-item active">
+                    <svg class="bd-placeholder-img d-block w-100 img-bordered" width="500" height="400"
+                        xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                        preserveAspectRatio="xMidYMid slice" focusable="false">
+                        <title>Placeholder</title>
+                        <rect width="500" height="400" fill="#55595c" rx="40" ry="40"></rect>
+                        <text x="35%" y="50%" fill="#eceeef" dy=".3em">{{ produto.nome_produto }}</text>
+                    </svg>
+                </div>
             {% endif %}
         </div>
     </div>
 </div>
 
-<!-- Novo botão Adicionar ao Carrinho -->
+<!-- Exibição da média das avaliações -->
+{% if media_avaliacao %}
+    <p class="media-avaliacao">Nota média: {{ media_avaliacao|floatformat:1 }} / 10</p>
+{% else %}
+    <p class="media-avaliacao">Nota média: Sem avaliações</p>
+{% endif %}
+
+<!-- Exibição das Avaliações dos Clientes -->
+<h2 class="text_avaliacao">Avaliações dos Clientes</h2>
+{% if produto.avaliacoes.exists %}
+    <div class="avaliacoes">
+        {% for avaliacao in produto.avaliacoes.all %}
+            <div class="review-card">
+                <p><strong>{{ avaliacao.cliente.username }}</strong> - Nota: {{ avaliacao.nota }} / 10</p>
+                <small>Data da avaliação: {{ avaliacao.data_avaliacao|date:"d/m/Y" }}</small>
+                {% if avaliacao.comentario %}
+                    <p>{{ avaliacao.comentario }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="no-reviews">Este produto ainda não possui avaliações.</p>
+{% endif %}
+
 <div class="button-container">
     <form action="{% url 'mercado:adicionar_ao_carrinho' produto.id %}" method="POST">
         {% csrf_token %}
@@ -514,8 +530,8 @@
                     <tr>
                         <th>
                             <p>Especificações<br>
-                                Estoque : {{produto.estoque}}<br>
-                                Preço : {{produto.preco}}
+                                Estoque : {{ produto.estoque }}<br>
+                                Preço : {{ produto.preco }}
                             </p>
                         </th>
                     </tr>
@@ -530,7 +546,7 @@
     {% for sugerida in outros_produto %}
     <div class="sugestao-card">
         {% if sugerida.foto_ambiente %}
-        <img src="{{ sugerida.foto_ambiente.url }}" alt="{{ sugerida.nome }}" class="sugestao-img">
+            <img src="{{ sugerida.foto_ambiente.url }}" alt="{{ sugerida.nome }}" class="sugestao-img">
         {% endif %}
         <div class="sugestao-info">
             <h3>{{ sugerida.nome_produto }}</h3>
@@ -548,7 +564,6 @@
 
 <script>
     var modal = document.getElementById("myModal");
-
     var modalImg = document.getElementById("img01");
     var images = document.querySelectorAll('.review-images img');
     images.forEach(img => {
@@ -557,9 +572,7 @@
             modalImg.src = this.src;
         }
     });
-
     var span = document.getElementsByClassName("close")[0];
-
     span.onclick = function () {
         modal.style.display = "none";
     }

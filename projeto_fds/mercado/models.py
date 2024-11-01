@@ -98,3 +98,15 @@ class Compra(models.Model):
 
     def __str__(self):
         return f"Compra {self.id} - {self.cliente.username}"
+class Avaliacao(models.Model):
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE, related_name='avaliacoes')
+    cliente = models.ForeignKey(User, on_delete=models.CASCADE)
+    nota = models.IntegerField(choices=[(i, str(i)) for i in range(11)], default=0)  # Nota de 0 a 10
+    comentario = models.TextField(blank=True, null=True)
+    data_avaliacao = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('produto', 'cliente')  # Garante que cada cliente avalie um produto apenas uma vez
+
+    def __str__(self):
+        return f"Avaliação de {self.cliente.username} para {self.produto.nome_produto} - Nota: {self.nota}"

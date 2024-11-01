@@ -1,32 +1,40 @@
-{% extends 'base/global/base.html' %}
-{% block content %}
-<h2>Histórico de Vendas</h2>
+<h1>Histórico de Compras</h1>
 
-{% if vendas %}
-    {% for venda in vendas %}
-        <h3>Data da venda: {{ venda.data_venda|date:"d 'de' F 'de' Y 'às' H:i" }}</h3>
-        
-        <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; margin-bottom: 20px;">
-            <thead>
-                <tr>
-                    <th>Nome do Produto</th>
-                    <th>Preço</th>
-                    <th>Quantidade</th>
-                    <th>Total</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>{{ venda.produto.nome_produto }}</td>
-                    <td>R$ {{ venda.produto.preco }}</td>
-                    <td>{{ venda.quantidade }}</td>
-                    <td>R$ {{ venda.produto.preco|floatformat:2|add:venda.quantidade|floatformat:2 }}</td>
-                </tr>
-            </tbody>
-        </table>
-    {% endfor %}
-{% else %}
-    <p>Você ainda não fez nenhuma venda.</p>
-{% endif %}
+{% for compra in compras %}
+    <h2>Data da compra: {{ compra.data_compra|date:"d 'de' F 'de' Y 'às' H:i" }}</h2>
+    <p>Total: R$ {{ compra.total }}</p>
 
-{% endblock %}
+    <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Nome do Produto</th>
+                <th>Quantidade</th>
+                <th>Hora da Compra</th>
+                <th>Avaliação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in compra.produtos.all %}
+            <tr>
+                <td>{{ produto.nome_produto }}</td>
+                <td>{{ produto.estoque }}</td>
+                <td>{{ compra.data_compra|time:"H:i" }}</td>
+                <td>
+                    <form method="POST" action=".">
+                        {% csrf_token %}
+                        <input type="hidden" name="produto_id" value="{{ produto.id }}">
+                        <label for="nota">Nota:</label>
+                        <input type="number" name="nota" min="0" max="10" value="{% if produto.avaliacoes.first %}{{ produto.avaliacoes.first.nota }}{% else %}0{% endif %}">
+                        <button type="submit">Avaliar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br><br>
+{% endfor %}
+
+<button onclick="window.location.href='{% url 'mercado:home' %}'" style="margin-top: 20px; padding: 10px; background-color: #000; color: #fff; border: none; cursor: pointer; border-radius: 5px;">
+    Voltar para Home
+</button>

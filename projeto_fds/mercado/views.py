@@ -14,8 +14,9 @@ from django.core.files.storage import FileSystemStorage
 import random
 from django.http import JsonResponse
 from django.contrib import messages
-from .models import UserCliente
+from .models import UserCliente,Produto,Avaliacao,Compra
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Avg
 
 
 # Create your views here.
@@ -166,6 +167,7 @@ def detalhes(request, produto_id):
     usuario = request.user
     favorito = Favorito.objects.filter(usuario=usuario, produto=produto).exists()
     detalhes_produto = produto.detalhes()
+    media_avaliacao = Avaliacao.objects.filter(produto=produto).aggregate(Avg('nota'))['nota__avg']
 
     outros_produto = list(Produto.objects.exclude(id=produto_id))
     random.shuffle(outros_produto)
@@ -189,6 +191,7 @@ def detalhes(request, produto_id):
         'detalhes_produto': detalhes_produto,
         'favorito': favorito,
         'outros_produto': outros_produto,
+        'media_avaliacao': media_avaliacao,
     })
 @login_required
 def exibir_carrinho(request):
@@ -341,6 +344,22 @@ def home_fornecedor(request):
 @login_required  # Garante que só usuários autenticados possam acessar
 def historico_compras(request):
     compras = Compra.objects.filter(cliente=request.user)  # Obtém as compras do usuário logado
+
+    # Tratamento de envio de avaliação
+    if request.method == "POST":
+        produto_id = request.POST.get('produto_id')
+        nota = request.POST.get('nota')
+        produto = get_object_or_404(Produto, id=produto_id)
+
+        # Cria ou atualiza a avaliação
+        Avaliacao.objects.update_or_create(
+            produto=produto,
+            cliente=request.user,
+            defaults={'nota': nota}
+        )
+
+        return redirect('historico_compras')  # Redireciona para evitar reenvio do formulário
+
     return render(request, 'historico_compras.html', {'compras': compras})
 @login_required
 def finalizar_compra(request):
@@ -403,3 +422,19 @@ def remover_produto(request, produto_id):
         return JsonResponse({'success': True, 'message': 'Produto removido com sucesso.'})
     else:
         return JsonResponse({'success': False, 'message': 'Método não permitido.'}, status=405)
+@login_required
+def avaliar_produto(request, produto_id):
+    if request.method == "POST":
+        produto = get_object_or_404(Produto, id=produto_id)
+        nota = request.POST.get('nota')
+        
+        # Cria ou atualiza a avaliação
+        Avaliacao.objects.update_or_create(
+            produto=produto,
+            cliente=request.user,
+            defaults={'nota': nota}
+        )
+        
+        return redirect('historico_compras')  # Redireciona para o histórico de compras após avaliar
+
+    return redirect('historico_compras')
