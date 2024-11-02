@@ -306,13 +306,18 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control search-input" placeholder="Buscar produtos..." name="termo"
-                        id="search-input">
+                    <input type="text" class="form-control search-input" placeholder="Buscar produtos..." name="termo" id="search-input">
                     <div class="input-group-append">
                         <button class="btn search-icon" type="submit">
                             <i class="fas fa-search" id="search-icon">...</i>
                         </button>
                     </div>
+                </div>
+                <!-- Novos campos de filtro -->
+                <div class="mb-3">
+                    <input type="number" class="form-control" placeholder="Preço Mínimo" name="preco_min" step="0.01">
+                    <input type="number" class="form-control" placeholder="Preço Máximo" name="preco_max" step="0.01">
+                    <input type="number" class="form-control" placeholder="Nota Mínima" name="nota_min" step="0.1" min="0" max="10">
                 </div>
             </div>
         </div>

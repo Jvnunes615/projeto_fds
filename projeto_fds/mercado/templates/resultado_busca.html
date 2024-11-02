@@ -128,19 +128,26 @@
 <form action="{% url 'mercado:buscar_produtos' %}" method="GET" class="search-form">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8"> <!-- Ajustado para maior largura -->
+            <div class="col-md-8">
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control search-input" placeholder="Buscar produtos..." name="termo" id="search-input">
-                    <div class="input-group-append" >
+                    <input type="text" class="form-control search-input" placeholder="Buscar produtos..." name="termo" value="{{ termo }}" id="search-input">
+                    <div class="input-group-append">
                         <button class="btn search-icon" type="submit">
                             <i class="fas fa-search" id="search-icon"></i>
                         </button>
                     </div>
                 </div>
+                <!-- Novos campos de filtro -->
+                <div class="mb-3">
+                    <input type="number" class="form-control" placeholder="Preço Mínimo" name="preco_min" value="{{ request.GET.preco_min }}" step="0.01">
+                    <input type="number" class="form-control" placeholder="Preço Máximo" name="preco_max" value="{{ request.GET.preco_max }}" step="0.01">
+                    <input type="number" class="form-control" placeholder="Nota Mínima" name="nota_min" value="{{ request.GET.nota_min }}" step="0.1" min="0" max="10">
+                </div>
             </div>
         </div>
     </div>
 </form>
+
 <h3 style="margin: 26px 0 0 30px;">Resultados da Busca para "{{ termo }}"</h3>
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">

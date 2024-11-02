@@ -28,18 +28,27 @@ def home(request):
         'favoritos': list(favoritos),
     }
     return render(request, 'home.html', context)
-
 def buscar_produto(request):
-    if 'termo' in request.GET:
-        termo = request.GET['termo']
-        resultados = Produto.objects.filter(Q(nome_produto__icontains=termo) | Q(descricao__icontains=termo))
-        if resultados:
-            return render(request, 'resultado_busca.html', {'resultados': resultados, 'termo': termo})
-        else:
-            mensagem_alerta = f'Nenhum produto encontrado com o termo "{termo}".'
-            return render(request, 'resultado_busca.html', {'mensagem_alerta': mensagem_alerta, 'termo': termo})
-    else:
-        return redirect('mercado:home')
+    termo = request.GET.get('termo', '')
+    preco_min = request.GET.get('preco_min')
+    preco_max = request.GET.get('preco_max')
+    nota_min = request.GET.get('nota_min')
+
+    resultados = Produto.objects.all()
+
+    if termo:
+        resultados = resultados.filter(Q(nome_produto__icontains=termo) | Q(descricao__icontains=termo))
+
+    if preco_min:
+        resultados = resultados.filter(preco__gte=preco_min)
+
+    if preco_max:
+        resultados = resultados.filter(preco__lte=preco_max)
+
+    if nota_min:
+        resultados = resultados.annotate(media_nota=Avg('avaliacoes__nota')).filter(media_nota__gte=nota_min)
+
+    return render(request, 'resultado_busca.html', {'resultados': resultados, 'termo': termo})
 
 
 def tela_cadastro(request):
