@@ -23,6 +23,7 @@ urlpatterns = [
     path('historico_compras/', views.historico_compras, name='historico_compras'),
     path('finalizar_compra/', views.finalizar_compra, name='finalizar_compra'),
     path('editar_produto/<int:produto_id>/', views.editar_produto, name='editar_produto'),
+    path('atualizar_produto/<int:produto_id>/', views.atualizar_produto, name='atualizar_produto'),    
     path('remover_produto/<int:produto_id>/', views.remover_produto, name='remover_produto'),
 
 ]

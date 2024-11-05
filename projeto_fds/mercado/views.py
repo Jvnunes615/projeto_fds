@@ -413,22 +413,22 @@ def finalizar_compra(request):
 @user_passes_test(fornecedor_check)  # Verifica se o usuário é fornecedor
 def editar_produto(request, produto_id):
     produto = get_object_or_404(Produto, id=produto_id, fornecedor=request.user)
-    return render(request, 'mercado:editar_produto.html', {'produto': produto})
+    return render(request, 'editar_produto.html', {'produto': produto, 'produto_id' : produto.id, 'nome_produto' : produto.nome_produto, 'preco' : produto.preco, 'estoque' : produto.estoque})
 
 @csrf_exempt
 @login_required
 @user_passes_test(fornecedor_check)
 def atualizar_produto(request, produto_id):
     if request.method == 'POST':
-        dados = json.loads(request.body)
         produto = get_object_or_404(Produto, id=produto_id, fornecedor=request.user)
-        produto.nome = dados.get('nome', produto.nome)
-        produto.estoque = dados.get('estoque', produto.estoque)
-        produto.preco = dados.get('preco', produto.preco)
+        produto.nome_produto = request.POST.get('nome_produto', produto.nome_produto)
+        produto.estoque = request.POST.get('estoque', produto.estoque)
+        produto.preco = request.POST.get('preco', produto.preco)
         produto.save()
-        return JsonResponse({'success': True})
-    return JsonResponse({'success': False}, status=400)
-from django.shortcuts import redirect
+        return redirect('mercado:home_fornecedor')  # Redireciona para a home do fornecedor
+    
+    return redirect('mercado:home_fornecedor')
+
 
 @login_required
 @user_passes_test(fornecedor_check)
