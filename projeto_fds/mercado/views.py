@@ -408,7 +408,7 @@ def finalizar_compra(request):
     carrinho.itens.all().delete()
 
     messages.success(request, "Compra finalizada com sucesso!")
-    return redirect('historico_compras')
+    return redirect('mercado:historico_compras')
 @login_required
 @user_passes_test(fornecedor_check)  # Verifica se o usuário é fornecedor
 def editar_produto(request, produto_id):
