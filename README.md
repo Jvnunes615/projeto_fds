@@ -67,9 +67,11 @@ Bem-vindo ao nosso projeto de FDS (Fundamentos de Desenvolvimento de Software). 
   <summary>Entrega 4</summary>
 
   ### Sprint do Jira:
-  
+  ![imagem_2024-11-08_130535252](https://github.com/user-attachments/assets/ada59534-54c5-4aab-b667-1fe46eb25c81)
   ### Backlog:
-
+  ![imagem_2024-11-08_130626206](https://github.com/user-attachments/assets/d0a4cce1-e8cd-4836-938c-2d9966f78f29)
+  ### Bug tracker
+  
 <li>
     <a   
       >Link do Screencast do Figma</a
