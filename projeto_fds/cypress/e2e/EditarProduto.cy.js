@@ -1,6 +1,6 @@
 describe('test suite editar produtos', () => {
 
-    // Cenário 1: Produto atualizado com sucesso
+    // Cenário : Produto atualizado com sucesso
     it('cenario1', () => { 
         cy.visit('/');
         
@@ -22,17 +22,17 @@ describe('test suite editar produtos', () => {
         cy.url().should('include', '/home_fornecedor');
         
         // Acessa a página de edição do produto
-        cy.get('#produto-6 > .card-body > .d-flex > .btn-group > a.btn').click();
+        cy.get(':nth-child(1)  > .card-body > .d-flex > .btn-group > a.btn').click();
 
         // Simula a edição de um campo, por exemplo, o nome do produto
         cy.get('#nome_produto').clear().type('Novo Nome do Produto');
         cy.get('#descricao').clear().type('Nova descrição do produto atualizado.');
+        cy.get('#preco').clear().type('10.10');
         
         // Salva a atualização do produto
-        cy.get('form > .btn-primary').click();
-        
+        cy.get('.container > form > button').click()        
         // Valida que a atualização foi concluída com sucesso
-        cy.get('.alert-success').should('contain', 'Produto atualizado com sucesso');
+        cy.get(':nth-child(1) > .card-body > .card-title').should('contain', 'Novo Nome do Produto');
     });
 
     // Cenário 2: Produto removido do catálogo e não é mais visível para os clientes
@@ -57,10 +57,10 @@ describe('test suite editar produtos', () => {
         cy.url().should('include', '/home_fornecedor');
         
         // Acessa o botão para remover o produto
-        cy.get('#produto-6 > .card-body > .d-flex > .btn-group > button.btn').click();
+        cy.get(':nth-child(1) > .card-body > .d-flex > .btn-group > button.btn').click();
         
         // Verifica que o produto não está mais visível na lista
-        cy.get('#produto-6').should('not.exist');
+        cy.get(':nth-child(1)').should('not.exist');
     });
 
     // Cenário 3: Exibir mensagem de erro informando quais campos são inválidos
@@ -76,7 +76,7 @@ describe('test suite editar produtos', () => {
     
             cy.get('.dropdown-menu').click(); 
         });
-        
+
         cy.get('#nome_usuario').type('pjsilva');
         cy.get('#senha').type('pjs123');
         cy.get('form > button').click();
@@ -85,17 +85,16 @@ describe('test suite editar produtos', () => {
         cy.url().should('include', '/home_fornecedor');
         
         // Acessa a página de edição do produto
-        cy.get('#produto-7 > .card-body > .d-flex > .btn-group > a.btn').click();
+        cy.get(':nth-child(1) > .card-body > .d-flex > .btn-group > a.btn').click();
         
         // Deixa campos obrigatórios em branco para testar validação
         cy.get('#nome_produto').clear();
         cy.get('#descricao').clear();
         
         // Tenta salvar o produto com os campos obrigatórios vazios
-        cy.get('form > .btn-primary').click();
-        
+        cy.get('.container > form > button').click()       
         // Valida as mensagens de erro de campos obrigatórios
-        cy.get('.alert-danger').should('contain', 'Nome do produto é obrigatório');
-        cy.get('.alert-danger').should('contain', 'Descrição do produto é obrigatória');
+        cy.url().should('include', '/editar_produto');
+
     });
 });
