@@ -413,7 +413,15 @@ def finalizar_compra(request):
 @user_passes_test(fornecedor_check)  # Verifica se o usuário é fornecedor
 def editar_produto(request, produto_id):
     produto = get_object_or_404(Produto, id=produto_id, fornecedor=request.user)
-    return render(request, 'editar_produto.html', {'produto': produto, 'produto_id' : produto.id, 'nome_produto' : produto.nome_produto, 'preco' : produto.preco, 'estoque' : produto.estoque})
+    preco = float(produto.preco) if produto.preco else 0.00
+    return render(request, 'editar_produto.html', {
+        'produto': produto,
+        'produto_id': produto.id,
+        'nome_produto': produto.nome_produto,
+        'descricao': produto.descricao,
+        'preco': preco,
+        'estoque': produto.estoque,
+    })
 
 @csrf_exempt
 @login_required
@@ -422,6 +430,7 @@ def atualizar_produto(request, produto_id):
     if request.method == 'POST':
         produto = get_object_or_404(Produto, id=produto_id, fornecedor=request.user)
         produto.nome_produto = request.POST.get('nome_produto', produto.nome_produto)
+        produto.descricao = request.POST.get('descricao', produto.descricao)
         produto.estoque = request.POST.get('estoque', produto.estoque)
         produto.preco = request.POST.get('preco', produto.preco)
         produto.save()
