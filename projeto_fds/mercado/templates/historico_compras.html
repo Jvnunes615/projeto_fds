@@ -37,8 +37,8 @@
 {% endfor %}
 
 <!-- Botão de Voltar para a Home -->
-<button onclick="window.location.href='{% url 'mercado:home' %}'" style="margin-top: 20px; padding: 10px; background-color: #000; color: #fff; border: none; cursor: pointer; border-radius: 5px;">
-    Voltar para Home
+<button style="margin-top: 20px; padding: 10px; background-color: #000; color: #fff; border: none; cursor: pointer; border-radius: 5px;">
+    <a href="{% url 'mercado:home'%}" class="btn btn-sm btn-outline-secondary">Voltar para Home</a>
 </button>
 
 
