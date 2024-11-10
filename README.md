@@ -73,7 +73,7 @@ Bem-vindo ao nosso projeto de FDS (Fundamentos de Desenvolvimento de Software). 
   ### Bug tracker
   
 <li>
-    <a   
+    <a  href ="https://youtu.be/kAejJHZnu4c" 
       >Link do Screencast do Figma</a
     >
 <li>
