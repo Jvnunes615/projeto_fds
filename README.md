@@ -71,6 +71,7 @@ Bem-vindo ao nosso projeto de FDS (Fundamentos de Desenvolvimento de Software). 
   ### Backlog:
   ![imagem_2024-11-08_130626206](https://github.com/user-attachments/assets/d0a4cce1-e8cd-4836-938c-2d9966f78f29)
   ### Bug tracker
+  ![imagem_2024-11-11_190539164](https://github.com/user-attachments/assets/72cbb9e1-0f26-40cf-948d-e58b59bb87c8)
   
 <li>
     <a  href ="https://youtu.be/kAejJHZnu4c" 
