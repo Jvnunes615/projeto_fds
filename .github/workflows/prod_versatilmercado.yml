@@ -32,8 +32,10 @@ jobs:
 
       - name: Cleaning testing files
         run: |
-          cd SEUPROJETODJANGO/
+          cd projeto_fds/
           rm .env
+          rm cypress.config.js
+          -rf cypress/
           cd ..
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
