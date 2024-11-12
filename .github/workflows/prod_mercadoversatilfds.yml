@@ -44,7 +44,7 @@ jobs:
         with:
           name: python-app
           path: |
-            release.zip
+            projeto_fds
             !venv/
 
   deploy:
