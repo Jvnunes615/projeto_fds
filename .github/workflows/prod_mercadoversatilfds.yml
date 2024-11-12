@@ -39,9 +39,6 @@ jobs:
          rm cypress.config.js
          rm .env
 
-      - name: Zip artifact for deployment
-        run: zip release.zip ./projeto_fds -r
-
       - name: Upload artifact for deployment jobs
         uses: actions/upload-artifact@v4
         with:
@@ -64,9 +61,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: python-app
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
 
       
       - name: Login to Azure
