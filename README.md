@@ -83,7 +83,7 @@ Bem-vindo ao nosso projeto de FDS (Fundamentos de Desenvolvimento de Software). 
     >
 
 <li>
-    <a href ="https://github.com/user-attachments/assets/8336542b-8bd4-46fd-8f30-445f5f680e99"
+    <a href ="https://github.com/user-attachments/assets/a9020ab4-daca-40ea-8f00-b48e93bda20c"
       >Link do Screencast do site</a
     >
 </details>
