@@ -35,7 +35,7 @@ jobs:
           cd projeto_fds/
           rm .env
           rm cypress.config.js
-          -rf cypress/
+          rm -rf cypress/
           cd ..
         
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
