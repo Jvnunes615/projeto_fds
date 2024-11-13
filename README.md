@@ -88,7 +88,7 @@ Bem-vindo ao nosso projeto de FDS (Fundamentos de Desenvolvimento de Software). 
     >
   <li>
     <a href ="https://youtu.be/toFFrBYNB0M"
-      >Link do Screencast do site (pelo youtube)/a
+      >Link do Screencast do site (pelo youtube)</a
     >
 </details>
 
