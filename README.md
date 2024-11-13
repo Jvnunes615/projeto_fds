@@ -86,6 +86,10 @@ Bem-vindo ao nosso projeto de FDS (Fundamentos de Desenvolvimento de Software). 
     <a href ="https://github.com/user-attachments/assets/a9020ab4-daca-40ea-8f00-b48e93bda20c"
       >Link do Screencast do site</a
     >
+  <li>
+    <a href ="https://youtu.be/toFFrBYNB0M"
+      >Link do Screencast do site (pelo youtube)/a
+    >
 </details>
 
 ## Membros do grupo:
